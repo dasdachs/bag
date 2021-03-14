@@ -3,11 +3,11 @@
 start: server client
 
 server:
-	cd ./backend && go run server.go
+	cd ./server && go run server.go
 
 
 client:
-	cd ./frontend && yarn start
+	cd ./client && yarn start
 
 help: Makefile
 	@echo
