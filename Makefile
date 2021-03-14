@@ -3,7 +3,7 @@
 start: server client
 
 server:
-	cd ./backend && go run main.go
+	cd ./backend && go run server.go
 
 
 client:
