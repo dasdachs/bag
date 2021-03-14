@@ -40,11 +40,11 @@ func main() {
 		{
 			categoriesGroup.GET("", controllers.GetAllCategories)
 			categoriesGroup.POST("", controllers.CreateCategory)
-			categoriesGroup.GET("/:id", controllers.GetCategoryById)
-			categoriesGroup.PUT("/:id", controllers.UpdateCategory)
-			categoriesGroup.DELETE("/:id", controllers.DeleteCategory)
-			categoriesGroup.GET("/:id/items", controllers.GetItemById)
-			categoriesGroup.POST("/:id/items", controllers.AppendItemToCategory)
+			categoriesGroup.GET("/:categoryId", controllers.GetCategoryById)
+			categoriesGroup.PUT("/:categoryId", controllers.UpdateCategory)
+			categoriesGroup.DELETE("/:categoryId", controllers.DeleteCategory)
+			categoriesGroup.GET("/:categoryId/items", controllers.GetItemById)
+			categoriesGroup.POST("/:categoryId/items", controllers.AppendItemToCategory)
 			categoriesGroup.PUT("/:categoryId/items/:id", controllers.UpdateItem)
 			categoriesGroup.DELETE("/:categoryId/items/:id", controllers.DeleteItem)
 		}

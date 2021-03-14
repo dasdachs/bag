@@ -33,7 +33,7 @@ func CreateCategory(c *gin.Context) {
 }
 
 func UpdateCategory(c *gin.Context) {
-	id := c.Params.ByName("id")
+	id := c.Params.ByName("categoryId")
 
 	category, err := models.GetCategoryById(id)
 
@@ -61,7 +61,7 @@ func UpdateCategory(c *gin.Context) {
 }
 
 func AppendItemToCategory(c *gin.Context) {
-	id := c.Params.ByName("id")
+	id := c.Params.ByName("categoryId")
 
 	var item models.Item
 
@@ -81,7 +81,7 @@ func AppendItemToCategory(c *gin.Context) {
 }
 
 func GetCategoryById(c *gin.Context) {
-	id := c.Params.ByName("id")
+	id := c.Params.ByName("categoryId")
 
 	category, err := models.GetCategoryById(id)
 
@@ -97,7 +97,7 @@ func GetCategoryById(c *gin.Context) {
 }
 
 func DeleteCategory(c *gin.Context) {
-	id := c.Params.ByName("id")
+	id := c.Params.ByName("categoryId")
 
 	if err := models.DeleteCategory(id); err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
