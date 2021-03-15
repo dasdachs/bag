@@ -1,111 +1,103 @@
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
+import { useStyletron } from "baseui";
+import { Heading, HeadingLevel } from "baseui/heading";
+import { Notification, KIND } from "baseui/notification";
 import { FormControl } from "baseui/form-control";
-import { Button, SIZE as ButtonSize, SHAPE as ButtonType } from "baseui/button";
 import { Input } from "baseui/input";
-import { Slider } from "baseui/slider";
-import {
-  Select,
-  SIZE as SelectSize,
-  TYPE as SelectType,
-  OnChangeParams,
-} from "baseui/select";
+import { Combobox } from "baseui/combobox";
+import { Button } from "baseui/button";
 
-import { Category, CategoryOption, Item } from "../../App";
+import { UseFetch } from "../../hooks/UseFetch";
+import { Category } from "../../interfaces";
 
-interface AddItemProps {
-  categories: CategoryOption[];
-  items: (string | number)[][];
-}
+export function AddItem() {
+  const [css] = useStyletron();
 
-export const AddItem = ({ categories, items }: AddItemProps): JSX.Element => {
-  const [name, setName] = useState("");
-  const [quantity, setQuantity] = useState([0]);
-  const [category, setCategory] = useState<CategoryOption[]>([]);
+  const {
+    isLoading,
+    error: categoriesError,
+    data,
+    abortController,
+  } = UseFetch<Category>("/api/v1/categories");
 
-  const onSelect = async (param: OnChangeParams): Promise<void> => {
-    let categoryOption = categories.find(
-      (category) => category.id === param?.option?.id ?? -1
-    );
-    if (!categoryOption) {
-      const response = await fetch("/api/v1/categories", {
-        method: "POST",
-        body: JSON.stringify({
-          name: param.option?.label ?? "",
-        }),
-      });
+  useEffect(() => {
+    return () => {
+      abortController.abort();
+    };
+  }, [abortController]);
 
-      if (response.ok) {
-        const category = (await response.json()) as Category;
-        categoryOption = {
-          id: category.id,
-          label: category.name,
-          category,
-        };
-        categories.push(categoryOption);
-      }
+  const [itemName, setItemName] = useState("");
+  const [quantity, setQuantity] = useState<number>(1);
+  const [categoryName, setCategoryName] = useState<string>("");
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    if (categoriesError) {
+      setError(categoriesError);
     }
-
-    if (categoryOption) {
-      setCategory([categoryOption]);
-    }
-  };
+  }, [categoriesError]);
 
   const onSubmit = async (): Promise<void> => {
-    const response = await fetch("/api/v1/items", {
-      method: "POST",
-      body: JSON.stringify({
-        name,
-        quantity: quantity[0],
-        categoryId: category[0]?.category.id,
-        category: category[0]?.category,
-      }),
-    });
-
-    if (response.ok) {
-      const { id, category } = (await response.json()) as Item;
-      items.push([id, name, quantity[0], category.name]);
-      setName("");
-      setQuantity([0]);
-      setCategory([]);
+    try {
+      const category = data.find(
+        (category) => category.categoryName === categoryName
+      );
+      if (category) {
+        await fetch(`/api/v1/categories/${category.id}/items`, {
+          method: "POST",
+          body: JSON.stringify({ itemName, quantity }),
+        });
+      }
+    } catch (e) {
+      setError(e as Error);
     }
   };
+
   return (
-    <div>
-      <FormControl label={() => "Item name"}>
+    <section className={css({ marginBottom: "16px", marginTop: "16px" })}>
+      <HeadingLevel>
+        <Heading styleLevel={5}>Add Item</Heading>
+      </HeadingLevel>
+      {error && (
+        <Notification kind={KIND.negative}>{() => error.message}</Notification>
+      )}
+      <FormControl label={() => "Item Name"}>
         <Input
-          value={name}
-          placeholder="Item name"
-          onChange={(e) => setName(e.currentTarget.value)}
+          size="compact"
+          clearOnEscape={true}
+          clearable={true}
+          value={itemName}
+          onChange={(e) => setItemName(e.currentTarget.value)}
+          disabled={isLoading}
         />
       </FormControl>
       <FormControl label={() => "Quantity"}>
-        <Slider
+        <Input
+          type="number"
+          size="compact"
+          min={1}
+          max={1000}
+          clearOnEscape={true}
           value={quantity}
-          onChange={({ value }) => value && setQuantity(value)}
+          onChange={(e) => setQuantity(parseInt(e.currentTarget.value, 10))}
+          disabled={isLoading}
         />
       </FormControl>
       <FormControl label={() => "Category"}>
-        <Select
-          size={SelectSize.compact}
-          options={categories}
-          value={category}
-          type={SelectType.search}
-          placeholder="Select category"
-          onChange={(params) => onSelect(params)}
-          labelKey="label"
-          valueKey="id"
-          creatable
+        <Combobox
+          size="compact"
+          value={categoryName}
+          options={data.map((category) => ({
+            label: category.categoryName,
+          }))}
+          onChange={(e) => setCategoryName(e)}
+          mapOptionToString={(option) => option.label}
         />
       </FormControl>
 
-      <Button
-        onClick={onSubmit}
-        size={ButtonSize.compact}
-        shape={ButtonType.pill}
-      >
-        Add item
+      <Button type="submit" onClick={onSubmit}>
+        Add
       </Button>
-    </div>
+    </section>
   );
-};
+}

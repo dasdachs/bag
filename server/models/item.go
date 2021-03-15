@@ -4,7 +4,7 @@ import "github.com/dasdachs/inventory/database"
 
 type Item struct {
 	ID         uint     `form:"id" json:"id"`
-	ItemName   string   `gorm:"not null" form:"itemName" json:"ItemName"`
+	ItemName   string   `gorm:"not null" form:"itemName" json:"itemName"`
 	Quantity   uint8    `gorm:"not null" form:"quantity" json:"quantity"`
 	CategoryID uint     `form:"categoryId" json:"categoryId"`
 	Category   Category `form:"category" json:"category,omitempty"`
@@ -27,7 +27,7 @@ func (i *Item) Update() error {
 func GetAllItems() (*[]Item, error) {
 	var items []Item
 
-	err := database.DB.Model(&Item{}).Select("items.id, items.item_name, items.quantity, categories.id as category_id, categories.category_name").Joins("LEFT JOIN categories on categories.id = items.category_id").Scan(&items).Error
+	err := database.DB.Preload("Category").Find(&items).Error
 	if err != nil {
 		return nil, err
 	}

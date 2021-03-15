@@ -1,14 +1,5 @@
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 node_modules
-
-# Yarn 2
-/.yarn/*
-!/.yarn/releases
-!/.yarn/plugins
-!/.yarn/sdks
-/.pnp.*
 
 # misc
 .DS_Store

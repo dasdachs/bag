@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "server"
+		},
+		{
+			"path": "client"
+		}
+	],
+	"settings": {
+		"cSpell.words": [
+			"baseui",
+			"styletron"
+		]
+	}
+}
