@@ -1,37 +1,22 @@
-import React from "react";
-
-import { Client as Styletron } from "styletron-engine-atomic";
-import { Provider as StyletronProvider } from "styletron-react";
-import { BaseProvider, LightTheme } from "baseui";
-import { Heading, HeadingLevel } from "baseui/heading";
-
-import { Container } from "./components/container";
-import { AddItem } from "./containers/add-item";
-import { ItemsTable } from "./containers/items-table";
-
-const engine = new Styletron();
+import { Suspense } from "react"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { CircularProgress, ThemeProvider } from "@mui/material"
+import CssBaseline from "@mui/material/CssBaseline"
+import { theme } from "./theme"
 
 function App() {
-  return (
-    <StyletronProvider value={engine}>
-      <BaseProvider theme={LightTheme}>
-        <Container>
-          <>
-            <HeadingLevel>
-              <Heading>Inventory</Heading>
-            </HeadingLevel>
-            <section>
-              <AddItem />
-              <ItemsTable />
-            </section>
-          </>
-        </Container>
-        {/* <Container>
-          <AddItem categories={categories} items={items} />
-        </Container> */}
-      </BaseProvider>
-    </StyletronProvider>
-  );
+	return (
+		<ThemeProvider theme={theme}>
+			<Suspense fallback={<CircularProgress />}>
+				<CssBaseline />
+				<BrowserRouter>
+					<Routes>
+						<Route path="/" element={<div>Hello</div>} />
+					</Routes>
+				</BrowserRouter>
+			</Suspense>
+		</ThemeProvider>
+	)
 }
 
-export default App;
+export default App

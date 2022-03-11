@@ -1,6 +1,10 @@
 package main
 
 import (
+	"embed"
+	"io/fs"
+	"net/http"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
@@ -8,6 +12,9 @@ import (
 	"github.com/dasdachs/inventory/database"
 	"github.com/dasdachs/inventory/models"
 )
+
+//go:embed _public/*
+var static embed.FS
 
 func main() {
 	db, err := database.InitDB()
@@ -50,7 +57,19 @@ func main() {
 		}
 	}
 
+	router.StaticFS("/", mustFS())
+
 	if err := router.Run(); err != nil {
 		panic("Failed to start server")
 	}
+}
+
+func mustFS() http.FileSystem {
+	sub, err := fs.Sub(static, "_public")
+
+	if err != nil {
+		panic(err)
+	}
+
+	return http.FS(sub)
 }

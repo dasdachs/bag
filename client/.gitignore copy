@@ -1,8 +1,10 @@
 # Project
 /node_modules
-.vscode
-pnpm-error*
-build
+/dist
+pnpm-debug*
+.swc
 
 # Misc
+.vscode
+.idea
 .DS_Store

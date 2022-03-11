@@ -1,0 +1,12 @@
+{
+    "menu": {
+        "play_game": "Play game",
+        "new_game": "New game",
+        "create_game": "Create game",
+        "edit_game": "Edit game",
+        "edit_profile": "Edit profile"
+    },
+    "create": {
+        "public": "Public"
+    }
+}
